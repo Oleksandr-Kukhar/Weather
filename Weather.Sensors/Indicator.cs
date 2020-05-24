@@ -14,7 +14,7 @@ namespace Weather.Sensors
         public Wind wind { get; set; }
         public Clouds clouds { get; set; }
         public double Dt { get; set; }
-        public SuperSys sys { get; set; }
+        public Sys sys { get; set; }
         public double timezone { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }

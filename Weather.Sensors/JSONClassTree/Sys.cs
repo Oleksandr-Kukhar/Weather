@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Weather.Sensors
 {
-    public class SuperSys
+    public class Sys
     {
         public int Type { get; set; }
         public int Id { get; set; }
