@@ -11,5 +11,10 @@ namespace Weather.Persistence.Infrastructure.Storage
         Task<Wind> GetLastValueAsync();
         Task<Wind> GetMaxValueAsync(DateTime date);
         Task<Wind> GetMinValueAsync(DateTime date);
+        double GetMinimalWindSpeed();
+        public double GetMaximalWindSpeed();
+        void ChangeMinimalWindSpeed(double newWindSpeed);
+        void ChangeMaximalWindSpeed(double newWindSpeed);
+
     }
 }

@@ -36,5 +36,26 @@ namespace Weather.Persistence.Infrastructure.Storage
             var temperature = await _dbContext.Pressure.FirstAsync(x => x.RegisterTime.Date == date.Date && x.Value == minValue);
             return temperature;
         }
+        public double GetMinimalPressure()
+        {
+            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalPressure").Value;
+        }
+
+        public double GetMaximalPressure()
+        {
+            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalPressure").Value;
+        }
+        public void ChangeMinimalPressure(double newPressure)
+        {
+            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalPressure");
+            temperature.Value = newPressure;
+            _dbContext.SaveChanges();
+        }
+        public void ChangeMaximalPressure(double newPressure)
+        {
+            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalPressure");
+            temperature.Value = newPressure;
+            _dbContext.SaveChanges();
+        }
     }
 }

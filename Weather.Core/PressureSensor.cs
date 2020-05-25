@@ -17,11 +17,13 @@ namespace Weather.Core
             _pressureStorage = storage;
         }
 
-        public PhysicalValue<PressureUnit> CurrentPressure()
+        public PhysicalValue<PressureUnit> CurrentPressure(MinMaxUnit minmaxTemperature)
         {
-            var pressure = new PhysicalValue<PressureUnit>(_pressureStorage.GetLastValueAsync().Result.Value, PressureUnit.Hectopascal);
+            var temperature = new ValueConverter().ConvertValue(_pressureStorage.GetLastValueAsync().Result.Value, minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
 
-            return pressure;
+            var result = new PhysicalValue<PressureUnit>(temperature, PressureUnit.Hectopascal);
+
+            return result;
         }
 
         public override double CurrentValue()
@@ -29,28 +31,28 @@ namespace Weather.Core
             throw new NotImplementedException();
         }
 
-        public override PhysicalValue<PressureUnit> HighValue()
+        public override double HighValue()
         {
-            var maxPressure = _pressureStorage.GetMaxValueAsync(DateTime.UtcNow).Result;
-            var pressure = new PhysicalValue<PressureUnit>(maxPressure.Value, PressureUnit.Hectopascal);
-            return pressure;
+            return _pressureStorage.GetMaxValueAsync(DateTime.UtcNow).Result.Value;
         }
 
-        public override PhysicalValue<PressureUnit> LowValue()
+        public override double LowValue()
         {
-            var minPressure = _pressureStorage.GetMinValueAsync(DateTime.UtcNow).Result;
-            var pressure = new PhysicalValue<PressureUnit>(minPressure.Value, PressureUnit.Hectopascal);
-            return pressure;
+            return _pressureStorage.GetMinValueAsync(DateTime.UtcNow).Result.Value;
         }
 
-        public override void SetHighValue()
+        public PhysicalValue<PressureUnit> HighPressure(MinMaxUnit minmaxTemperature)
         {
-            throw new NotImplementedException();
+            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
+            var result = new PhysicalValue<PressureUnit>(humidity, PressureUnit.Hectopascal);
+            return result;
         }
 
-        public override void SetLowValue()
+        public PhysicalValue<PressureUnit> LowPressure(MinMaxUnit minmaxTemperature)
         {
-            throw new NotImplementedException();
+            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
+            var result = new PhysicalValue<PressureUnit>(humidity, PressureUnit.Hectopascal);
+            return result;
         }
 
         public override DateTime TimeOfHighValue()
@@ -68,6 +70,16 @@ namespace Weather.Core
         public override double Trend()
         {
             throw new NotImplementedException();
+        }
+
+        public override void SetHighValue(double newValue)
+        {
+            _pressureStorage.ChangeMaximalPressure(newValue);
+        }
+
+        public override void SetLowValue(double newValue)
+        {
+            _pressureStorage.ChangeMinimalPressure(newValue);
         }
     }
 }

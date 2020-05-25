@@ -10,7 +10,7 @@ namespace Weather.Web.DTO
         public string Date { get; set; }
         public string Time { get; set; }
         public int Temperature { get; set; }
-        public double Pressure { get; set; }
+        public int Pressure { get; set; }
         public int Humidity { get; set; }
         public int WindDirection { get; set; }
         public string WindDirectionStr { get; set; }

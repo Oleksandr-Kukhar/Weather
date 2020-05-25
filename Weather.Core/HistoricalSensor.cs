@@ -7,9 +7,9 @@ namespace Weather.Core
 {
     public abstract class HistoricalSensor<T>: CallibratingSensor where T : Enum
     {
-        public abstract PhysicalValue<T> HighValue();
+        public abstract double HighValue();
 
-        public abstract PhysicalValue<T> LowValue();
+        public abstract double LowValue();
 
         public abstract DateTime TimeOfHighValue();
 

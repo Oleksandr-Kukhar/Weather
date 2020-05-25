@@ -36,5 +36,26 @@ namespace Weather.Persistence.Infrastructure.Storage
             var wind = await _dbContext.Wind.FirstAsync(x => x.RegisterTime.Date == date.Date && x.Speed == minValue);
             return wind;
         }
+        public double GetMinimalWindSpeed()
+        {
+            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalWindSpeed").Value;
+        }
+
+        public double GetMaximalWindSpeed()
+        {
+            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalWindSpeed").Value;
+        }
+        public void ChangeMinimalWindSpeed(double newWindSpeed)
+        {
+            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalWindSpeed");
+            temperature.Value = newWindSpeed;
+            _dbContext.SaveChanges();
+        }
+        public void ChangeMaximalWindSpeed(double newWindSpeed)
+        {
+            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalWindSpeed");
+            temperature.Value = newWindSpeed;
+            _dbContext.SaveChanges();
+        }
     }
 }

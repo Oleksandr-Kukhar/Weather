@@ -3,88 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Weather.Persistence.Infrastructure;
 
 namespace Weather.Persistence.Infrastructure.Migrations
 {
     [DbContext(typeof(SensorsDataBaseContext))]
-    partial class SensorsDataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200525082036_removedMeasurementUnits")]
+    partial class removedMeasurementUnits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Weather.Persistence.Model.CriticalValues", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
-
-                    b.Property<string>("ValueName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CriticalValues");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1a0ba29a-83ef-4d6c-8cb1-fb28150bd584"),
-                            Value = 0.0,
-                            ValueName = "MinimalWindSpeed"
-                        },
-                        new
-                        {
-                            Id = new Guid("3c0a51a2-dd03-4ed9-8bbc-eea553214235"),
-                            Value = 10.0,
-                            ValueName = "MaximalWindSpeed"
-                        },
-                        new
-                        {
-                            Id = new Guid("a9d38d73-53ab-407b-93ed-8ab04ab11867"),
-                            Value = 1000.0,
-                            ValueName = "MinimalPressure"
-                        },
-                        new
-                        {
-                            Id = new Guid("d667d696-d52a-47c8-9b66-2178ce291c6a"),
-                            Value = 1100.0,
-                            ValueName = "MaximalPressure"
-                        },
-                        new
-                        {
-                            Id = new Guid("0e44f9e1-666d-4a16-8906-ec9979a2a37f"),
-                            Value = 30.0,
-                            ValueName = "MinimalHumidity"
-                        },
-                        new
-                        {
-                            Id = new Guid("84f5660f-6616-405d-b3a6-f269a18f6692"),
-                            Value = 100.0,
-                            ValueName = "MaximalHumidity"
-                        },
-                        new
-                        {
-                            Id = new Guid("b88eb944-fe18-4ad6-bb68-f61665094c36"),
-                            Value = 278.0,
-                            ValueName = "MinimalTemperature"
-                        },
-                        new
-                        {
-                            Id = new Guid("5c3e4881-16d2-4a88-bcd1-a9a3af7c4798"),
-                            Value = 288.0,
-                            ValueName = "MaximalTemperature"
-                        });
-                });
 
             modelBuilder.Entity("Weather.Persistence.Model.Humidity", b =>
                 {
@@ -101,6 +36,14 @@ namespace Weather.Persistence.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Humidity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("bf110ad6-c158-47f3-b5b2-c1cb5cd02c21"),
+                            RegisterTime = new DateTime(2020, 5, 25, 11, 20, 35, 875, DateTimeKind.Local).AddTicks(7070),
+                            Value = 50.0
+                        });
                 });
 
             modelBuilder.Entity("Weather.Persistence.Model.Pressure", b =>
@@ -118,6 +61,14 @@ namespace Weather.Persistence.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pressure");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("fe753342-7427-4b80-baa6-48da3a2c2350"),
+                            RegisterTime = new DateTime(2020, 5, 25, 11, 20, 35, 875, DateTimeKind.Local).AddTicks(4944),
+                            Value = 1010.0
+                        });
                 });
 
             modelBuilder.Entity("Weather.Persistence.Model.Temperature", b =>
@@ -135,6 +86,14 @@ namespace Weather.Persistence.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Temperature");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a8c8e1cb-e3e2-48b9-801c-d9b905c6210d"),
+                            RegisterTime = new DateTime(2020, 5, 25, 11, 20, 35, 872, DateTimeKind.Local).AddTicks(2685),
+                            Value = 14.0
+                        });
                 });
 
             modelBuilder.Entity("Weather.Persistence.Model.Wind", b =>
@@ -155,6 +114,15 @@ namespace Weather.Persistence.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Wind");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("090898fb-c6ad-4527-871c-26c1d0d7c963"),
+                            Direction = 0,
+                            RegisterTime = new DateTime(2020, 5, 25, 11, 20, 35, 875, DateTimeKind.Local).AddTicks(9874),
+                            Speed = 5.0
+                        });
                 });
 #pragma warning restore 612, 618
         }

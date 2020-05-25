@@ -17,10 +17,13 @@ namespace Weather.Core
             _humidityStorage = storage;
         }
 
-        public PhysicalValue<HumidityUnit> CurrentHumidity()
+        public PhysicalValue<HumidityUnit> CurrentHumidity(MinMaxUnit minmaxTemperature)
         {
-            var humidity = new PhysicalValue<HumidityUnit>(_humidityStorage.GetLastValueAsync().Result.Value, HumidityUnit.Percent);
-            return humidity;
+            var temperature = new ValueConverter().ConvertValue(_humidityStorage.GetLastValueAsync().Result.Value, minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
+
+            var result = new PhysicalValue<HumidityUnit>(temperature, HumidityUnit.Percent);
+
+            return result;
         }
 
         public override double CurrentValue()
@@ -28,30 +31,29 @@ namespace Weather.Core
             throw new NotImplementedException();
         }
 
-        public override PhysicalValue<HumidityUnit> HighValue()
+        public override double HighValue()
         {
-            var maxHumidity = _humidityStorage.GetMaxValueAsync(DateTime.UtcNow).Result;
-            var humidity = new PhysicalValue<HumidityUnit>(maxHumidity.Value, HumidityUnit.Percent);
-            return humidity;
+            return _humidityStorage.GetMaxValueAsync(DateTime.UtcNow).Result.Value;
         }
 
-        public override PhysicalValue<HumidityUnit> LowValue()
+        public override double LowValue()
         {
-            var minHumidity = _humidityStorage.GetMinValueAsync(DateTime.UtcNow).Result;
-            var humidity = new PhysicalValue<HumidityUnit>(minHumidity.Value, HumidityUnit.Percent);
-            return humidity;
+            return _humidityStorage.GetMinValueAsync(DateTime.UtcNow).Result.Value;
         }
 
-        public override void SetHighValue()
+        public PhysicalValue<HumidityUnit> HighHumidity(MinMaxUnit minmaxTemperature)
         {
-            throw new NotImplementedException();
+            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
+            var result = new PhysicalValue<HumidityUnit>(humidity, HumidityUnit.Percent);
+            return result;
         }
 
-        public override void SetLowValue()
+        public PhysicalValue<HumidityUnit> LowHumidity(MinMaxUnit minmaxTemperature)
         {
-            throw new NotImplementedException();
+            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
+            var result = new PhysicalValue<HumidityUnit>(humidity, HumidityUnit.Percent);
+            return result;
         }
-
         public override DateTime TimeOfHighValue()
         {
             var maxValTime = _humidityStorage.GetMaxValueAsync(DateTime.UtcNow).Result.RegisterTime;
@@ -62,6 +64,16 @@ namespace Weather.Core
         {
             var minValTime = _humidityStorage.GetMinValueAsync(DateTime.UtcNow).Result.RegisterTime;
             return minValTime;
+        }
+
+        public override void SetHighValue(double newValue)
+        {
+            _humidityStorage.ChangeMaximalHumidity(newValue);
+        }
+
+        public override void SetLowValue(double newValue)
+        {
+            _humidityStorage.ChangeMinimalHumidity(newValue);
         }
     }
 }

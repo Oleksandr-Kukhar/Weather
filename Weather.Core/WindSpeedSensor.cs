@@ -17,10 +17,13 @@ namespace Weather.Core
             _windStorage = storage;
         }
 
-        public PhysicalValue<SpeedUnit> CurrentSpeed()
+        public PhysicalValue<SpeedUnit> CurrentSpeed(MinMaxUnit minmaxTemperature)
         {
-            var speed = new PhysicalValue<SpeedUnit>(_windStorage.GetLastValueAsync().Result.Speed, SpeedUnit.MetersPerSecond);
-            return speed;
+            var temperature = new ValueConverter().ConvertValue(_windStorage.GetLastValueAsync().Result.Speed, minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
+
+            var result = new PhysicalValue<SpeedUnit>(temperature, SpeedUnit.MetersPerSecond);
+
+            return result;
         }
 
         public override double CurrentValue()
@@ -28,28 +31,28 @@ namespace Weather.Core
             throw new NotImplementedException();
         }
 
-        public override PhysicalValue<SpeedUnit> HighValue()
+        public override double HighValue()
         {
-            var maxWind = _windStorage.GetMaxValueAsync(DateTime.UtcNow).Result;
-            var speed = new PhysicalValue<SpeedUnit>(maxWind.Speed, SpeedUnit.MetersPerSecond);
-            return speed;
+            return _windStorage.GetMaxValueAsync(DateTime.UtcNow).Result.Speed;
         }
 
-        public override PhysicalValue<SpeedUnit> LowValue()
+        public override double LowValue()
         {
-            var minWind = _windStorage.GetMinValueAsync(DateTime.UtcNow).Result;
-            var speed = new PhysicalValue<SpeedUnit>(minWind.Speed, SpeedUnit.MetersPerSecond);
-            return speed;
+            return _windStorage.GetMinValueAsync(DateTime.UtcNow).Result.Speed;
         }
 
-        public override void SetHighValue()
+        public PhysicalValue<SpeedUnit> HighSpeed(MinMaxUnit minmaxTemperature)
         {
-            throw new NotImplementedException();
+            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
+            var result = new PhysicalValue<SpeedUnit>(humidity, SpeedUnit.MetersPerSecond);
+            return result;
         }
 
-        public override void SetLowValue()
+        public PhysicalValue<SpeedUnit> LowSpeed(MinMaxUnit minmaxTemperature)
         {
-            throw new NotImplementedException();
+            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
+            var result = new PhysicalValue<SpeedUnit>(humidity, SpeedUnit.MetersPerSecond);
+            return result;
         }
 
         public override DateTime TimeOfHighValue()
@@ -62,6 +65,16 @@ namespace Weather.Core
         {
             var minValTime = _windStorage.GetMinValueAsync(DateTime.UtcNow).Result.RegisterTime;
             return minValTime;
+        }
+
+        public override void SetHighValue(double newValue)
+        {
+            _windStorage.ChangeMaximalWindSpeed(newValue);
+        }
+
+        public override void SetLowValue(double newValue)
+        {
+            _windStorage.ChangeMinimalWindSpeed(newValue);
         }
     }
 }

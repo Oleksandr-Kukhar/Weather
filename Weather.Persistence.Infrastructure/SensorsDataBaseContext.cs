@@ -20,6 +20,7 @@ namespace Weather.Persistence.Infrastructure
         public virtual DbSet<Pressure> Pressure { get; set; }
         public virtual DbSet<Temperature> Temperature { get; set; }
         public virtual DbSet<Model.Wind> Wind { get; set; }
+        public virtual DbSet<CriticalValues> CriticalValues { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -32,48 +33,55 @@ namespace Weather.Persistence.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-
-            var seedTemperature = new Temperature()
+            CriticalValues minTemp = new CriticalValues()
             {
                 Id = Guid.NewGuid(),
-                Value = 14,
-                RegisterTime = DateTime.Now,
-                MeasurementUnits = "Kelvin"
+                Value = 278,
+                ValueName = "MinimalTemperature"
             };
-
-            var seedPressure = new Pressure()
-            { 
-                Id = Guid.NewGuid(),
-                Value = 1010,
-                RegisterTime = DateTime.Now,
-                MeasurementUnits = "hPa"
-            };
-
-            var seedHumidity = new Humidity()
+            CriticalValues maxTemp = new CriticalValues()
             {
                 Id = Guid.NewGuid(),
-                Value = 50,
-                RegisterTime = DateTime.Now,
-                MeasurementUnits = "%"
+                Value = 288,
+                ValueName = "MaximalTemperature"
             };
-
-            var seedWind = new Wind()
+            CriticalValues minHum = new CriticalValues()
             {
                 Id = Guid.NewGuid(),
-                Speed = 5,
-                Direction = 0,
-                RegisterTime = DateTime.Now,
-                MeasurementUnits = "m/s"
+                Value = 30,
+                ValueName = "MinimalHumidity"
             };
-
-            //Dlya togo shob buli yakis dani
-            modelBuilder.Entity<Temperature>().HasData(seedTemperature);
-            modelBuilder.Entity<Pressure>().HasData(seedPressure);
-            modelBuilder.Entity<Humidity>().HasData(seedHumidity);
-            modelBuilder.Entity<Wind>().HasData(seedWind);
-
-
+            CriticalValues maxHum = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 100,
+                ValueName = "MaximalHumidity"
+            };
+            CriticalValues minPress = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 1000,
+                ValueName = "MinimalPressure"
+            };
+            CriticalValues maxPress = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 1100,
+                ValueName = "MaximalPressure"
+            };
+            CriticalValues minSpd= new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 0,
+                ValueName = "MinimalWindSpeed"
+            };
+            CriticalValues maxSpd = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 10,
+                ValueName = "MaximalWindSpeed"
+            };
+            modelBuilder.Entity<CriticalValues>().HasData(new CriticalValues[] { minSpd, maxSpd, minPress, maxPress, minHum, maxHum, minTemp, maxTemp });
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

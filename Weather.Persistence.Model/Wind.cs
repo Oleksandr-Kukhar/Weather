@@ -9,6 +9,5 @@ namespace Weather.Persistence.Model
         public double Speed { get; set; }
         public int Direction { get; set; }
         public DateTime RegisterTime { get; set; }
-        public string MeasurementUnits { get; set; }
     }
 }

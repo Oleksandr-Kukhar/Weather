@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Weather.Core.Domain;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Model;
 
@@ -16,29 +17,27 @@ namespace Weather.Sensors
             _dbcontext = context;
         }
 
-        public async Task WriteIndicatorsAsync(Indicator data)
+
+        public async Task WriteIndicatorsAsync(Indicator data, MinMaxUnit t, MinMaxUnit p, MinMaxUnit s, MinMaxUnit h)
         {
             var temperature = new Temperature()
             {
                 Id = Guid.NewGuid(),
-                Value = data.main.Temperature,
-                MeasurementUnits = "Kelvin",
+                Value = new ValueConverter().ConvertValue(data.main.Temperature,t.MinValue,t.MaxValue,t.MinSensor,t.MaxSensor),
                 RegisterTime = DateTime.UtcNow
             };
 
             var pressure = new Pressure()
             {
                 Id = Guid.NewGuid(),
-                Value = data.main.Pressure,
-                MeasurementUnits = "hPa",
+                Value = new ValueConverter().ConvertValue(data.main.Pressure, p.MinValue, p.MaxValue, p.MinSensor, p.MaxSensor),
                 RegisterTime = DateTime.UtcNow
             };
 
             var humidity = new Humidity()
             {
                 Id = Guid.NewGuid(),
-                Value = data.main.Humidity,
-                MeasurementUnits = "%",
+                Value = new ValueConverter().ConvertValue(data.main.Humidity, h.MinValue, h.MaxValue, h.MinSensor, h.MaxSensor),
                 RegisterTime = DateTime.UtcNow
             };
 
@@ -46,8 +45,7 @@ namespace Weather.Sensors
             {
                 Id = Guid.NewGuid(),
                 Direction = data.wind.Direction,
-                Speed = data.wind.Speed,
-                MeasurementUnits = "m/s",
+                Speed = new ValueConverter().ConvertValue(data.wind.Speed, s.MinValue, s.MaxValue, s.MinSensor, s.MaxSensor),
                 RegisterTime = DateTime.UtcNow
             };
 

@@ -37,5 +37,26 @@ namespace Weather.Persistence.Infrastructure.Storage
             return temperature;
         }
 
+        public double GetMinimalTemperature()
+        {
+            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalTemperature").Value;
+        }
+
+        public double GetMaximalTemperature()
+        {
+            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalTemperature").Value;
+        }
+        public void ChangeMinimalTemperature(double newTemperature)
+        {
+            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalTemperature");
+            temperature.Value = newTemperature;
+            _dbContext.SaveChanges();
+        }
+        public void ChangeMaximalTemperature(double newTemperature)
+        {
+            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalTemperature");
+            temperature.Value = newTemperature;
+            _dbContext.SaveChanges();
+        }
     }
 }

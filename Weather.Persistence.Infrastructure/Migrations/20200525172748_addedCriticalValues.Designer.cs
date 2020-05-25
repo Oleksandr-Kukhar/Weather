@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Weather.Persistence.Infrastructure;
 
 namespace Weather.Persistence.Infrastructure.Migrations
 {
     [DbContext(typeof(SensorsDataBaseContext))]
-    partial class SensorsDataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200525172748_addedCriticalValues")]
+    partial class addedCriticalValues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,49 +40,13 @@ namespace Weather.Persistence.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1a0ba29a-83ef-4d6c-8cb1-fb28150bd584"),
-                            Value = 0.0,
-                            ValueName = "MinimalWindSpeed"
-                        },
-                        new
-                        {
-                            Id = new Guid("3c0a51a2-dd03-4ed9-8bbc-eea553214235"),
-                            Value = 10.0,
-                            ValueName = "MaximalWindSpeed"
-                        },
-                        new
-                        {
-                            Id = new Guid("a9d38d73-53ab-407b-93ed-8ab04ab11867"),
-                            Value = 1000.0,
-                            ValueName = "MinimalPressure"
-                        },
-                        new
-                        {
-                            Id = new Guid("d667d696-d52a-47c8-9b66-2178ce291c6a"),
-                            Value = 1100.0,
-                            ValueName = "MaximalPressure"
-                        },
-                        new
-                        {
-                            Id = new Guid("0e44f9e1-666d-4a16-8906-ec9979a2a37f"),
-                            Value = 30.0,
-                            ValueName = "MinimalHumidity"
-                        },
-                        new
-                        {
-                            Id = new Guid("84f5660f-6616-405d-b3a6-f269a18f6692"),
-                            Value = 100.0,
-                            ValueName = "MaximalHumidity"
-                        },
-                        new
-                        {
-                            Id = new Guid("b88eb944-fe18-4ad6-bb68-f61665094c36"),
+                            Id = new Guid("b2bf9c0e-101c-4da5-8fe4-92a0ba2c1209"),
                             Value = 278.0,
                             ValueName = "MinimalTemperature"
                         },
                         new
                         {
-                            Id = new Guid("5c3e4881-16d2-4a88-bcd1-a9a3af7c4798"),
+                            Id = new Guid("52b24128-6129-4cb1-aeb4-1cd0c2ef5f54"),
                             Value = 288.0,
                             ValueName = "MaximalTemperature"
                         });

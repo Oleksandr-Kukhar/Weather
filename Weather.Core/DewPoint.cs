@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Weather.Core.Domain;
 
 namespace Weather.Core
 {
@@ -15,9 +16,9 @@ namespace Weather.Core
             humiditySensor = humidity;
         }
 
-        public double CalculateDewPoint()
+        public double CalculateDewPoint(MinMaxUnit minmaxTemperature, MinMaxUnit minmaxHumidity)
         {
-            double dewPoint = temperatureSensor.CurrentTemperature().Value - (1 - humiditySensor.CurrentHumidity().Value / 100) / 0.05;
+            double dewPoint = temperatureSensor.CurrentTemperature(minmaxTemperature).Value - (1 - humiditySensor.CurrentHumidity(minmaxHumidity).Value / 100) / 0.05;
             return dewPoint;
         }
     }

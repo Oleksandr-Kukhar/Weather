@@ -11,5 +11,9 @@ namespace Weather.Persistence.Infrastructure.Storage
         Task<Humidity> GetLastValueAsync();
         Task<Humidity> GetMaxValueAsync(DateTime date);
         Task<Humidity> GetMinValueAsync(DateTime date);
+        double GetMinimalHumidity();
+        double GetMaximalHumidity();
+        void ChangeMinimalHumidity(double newHumidity);
+        void ChangeMaximalHumidity(double newHumidity);
     }
 }

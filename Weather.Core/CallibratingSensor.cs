@@ -7,7 +7,7 @@ namespace Weather.Core
     public abstract class CallibratingSensor : Sensor
     {
         public abstract double CurrentValue();
-        public abstract void SetHighValue();
-        public abstract void SetLowValue();
+        public abstract void SetHighValue(double newValue);
+        public abstract void SetLowValue(double newValue);
     }
 }

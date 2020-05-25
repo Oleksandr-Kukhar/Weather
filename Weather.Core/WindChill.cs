@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Weather.Core.Domain;
 using Weather.Persistence.Infrastructure.Storage;
 
 namespace Weather.Core
@@ -16,9 +17,9 @@ namespace Weather.Core
             windSpeedSensor = windSpeed;
         }
 
-        public double CalculateWindChill()
+        public double CalculateWindChill(MinMaxUnit minmaxTemperature, MinMaxUnit minmaxWindSpeed)
         {
-            double windChill = temperatureSensor.CurrentTemperature().Value - 2 * windSpeedSensor.CurrentSpeed().Value;
+            double windChill = temperatureSensor.CurrentTemperature(minmaxTemperature).Value - 2 * windSpeedSensor.CurrentSpeed(minmaxWindSpeed).Value;
             return windChill;
         }
     }

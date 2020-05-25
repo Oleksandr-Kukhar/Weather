@@ -29,15 +29,12 @@ export class Home extends Component {
     }
   }
 
-  //vertity = () => {
-  //  const that = this
-  //  setInterval(() => { that.setState({ windDirection: that.state.windDirection + 1 }) }, 10)
-  //}
-  //componentDidMount = () => {
-  //  this.vertity();
-  //}
+  checkvalues = async () => {
+    setInterval(axios.get("checkvalues"),15000)
+  }
 
   render() {
+    //this.checkvalues();
     this.startFetchingWeather();
     return (
       <Container fluid>

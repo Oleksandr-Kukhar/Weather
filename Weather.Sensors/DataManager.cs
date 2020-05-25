@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Weather.Core.Domain;
 using Weather.Persistence.Infrastructure;
 
 namespace Weather.Sensors
@@ -14,7 +15,7 @@ namespace Weather.Sensors
         public DataManager()
         {
         }
-        public async Task StartDataRetreivingAsync()
+        public async Task StartDataRetreivingAsync(MinMaxUnit temperature, MinMaxUnit pressure, MinMaxUnit windSpeed, MinMaxUnit humidity)
         {
             if(!_shouldRetrieveData)
             {
@@ -23,15 +24,17 @@ namespace Weather.Sensors
 
                 while (_shouldRetrieveData)
                 {
-
-                    using (var context = new SensorsDataBaseContext())
+                    if (DateTime.Now.Second == 30)
                     {
-                        WeatherWriter weatherWriter = new WeatherWriter(context);
-                        var indicators = await mainSensor.GetIndicatorsAsync();
-                        await weatherWriter.WriteIndicatorsAsync(indicators);
+                        using (var context = new SensorsDataBaseContext())
+                        {
+                            WeatherWriter weatherWriter = new WeatherWriter(context);
+                            var indicators = await mainSensor.GetIndicatorsAsync();
+                            await weatherWriter.WriteIndicatorsAsync(indicators, temperature, pressure, windSpeed, humidity);
 
+                        }
                     }
-                    Thread.Sleep(60000);
+                    Thread.Sleep(1000);
                 }
             }
         }
