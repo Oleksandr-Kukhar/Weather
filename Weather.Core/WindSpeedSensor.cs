@@ -17,9 +17,9 @@ namespace Weather.Core
             _windStorage = storage;
         }
 
-        public PhysicalValue<SpeedUnit> CurrentSpeed(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<SpeedUnit> CurrentSpeed(MinMaxUnit minmaxWindSpeed)
         {
-            var temperature = new ValueConverter().ConvertValue(_windStorage.GetLastValueAsync().Result.Speed, minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
+            var temperature = new ValueConverter().ConvertValue(_windStorage.GetLastValueAsync().Result.Speed, minmaxWindSpeed.MinSensor, minmaxWindSpeed.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
 
             var result = new PhysicalValue<SpeedUnit>(temperature, SpeedUnit.MetersPerSecond);
 
@@ -41,16 +41,16 @@ namespace Weather.Core
             return _windStorage.GetMinValueAsync(DateTime.UtcNow).Result.Speed;
         }
 
-        public PhysicalValue<SpeedUnit> HighSpeed(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<SpeedUnit> HighSpeed(MinMaxUnit minmaxWindSpeed)
         {
-            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
+            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxWindSpeed.MinSensor, minmaxWindSpeed.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
             var result = new PhysicalValue<SpeedUnit>(humidity, SpeedUnit.MetersPerSecond);
             return result;
         }
 
-        public PhysicalValue<SpeedUnit> LowSpeed(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<SpeedUnit> LowSpeed(MinMaxUnit minmaxWindSpeed)
         {
-            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
+            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxWindSpeed.MinSensor, minmaxWindSpeed.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
             var result = new PhysicalValue<SpeedUnit>(humidity, SpeedUnit.MetersPerSecond);
             return result;
         }

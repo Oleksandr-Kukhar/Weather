@@ -17,9 +17,9 @@ namespace Weather.Core
             _pressureStorage = storage;
         }
 
-        public PhysicalValue<PressureUnit> CurrentPressure(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<PressureUnit> CurrentPressure(MinMaxUnit minmaxPressure)
         {
-            var temperature = new ValueConverter().ConvertValue(_pressureStorage.GetLastValueAsync().Result.Value, minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
+            var temperature = new ValueConverter().ConvertValue(_pressureStorage.GetLastValueAsync().Result.Value, minmaxPressure.MinSensor, minmaxPressure.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
 
             var result = new PhysicalValue<PressureUnit>(temperature, PressureUnit.Hectopascal);
 
@@ -41,16 +41,16 @@ namespace Weather.Core
             return _pressureStorage.GetMinValueAsync(DateTime.UtcNow).Result.Value;
         }
 
-        public PhysicalValue<PressureUnit> HighPressure(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<PressureUnit> HighPressure(MinMaxUnit minmaxPressure)
         {
-            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
+            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxPressure.MinSensor, minmaxPressure.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
             var result = new PhysicalValue<PressureUnit>(humidity, PressureUnit.Hectopascal);
             return result;
         }
 
-        public PhysicalValue<PressureUnit> LowPressure(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<PressureUnit> LowPressure(MinMaxUnit minmaxPressure)
         {
-            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
+            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxPressure.MinSensor, minmaxPressure.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
             var result = new PhysicalValue<PressureUnit>(humidity, PressureUnit.Hectopascal);
             return result;
         }

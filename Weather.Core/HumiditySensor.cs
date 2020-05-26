@@ -17,9 +17,9 @@ namespace Weather.Core
             _humidityStorage = storage;
         }
 
-        public PhysicalValue<HumidityUnit> CurrentHumidity(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<HumidityUnit> CurrentHumidity(MinMaxUnit minmaxHumidity)
         {
-            var temperature = new ValueConverter().ConvertValue(_humidityStorage.GetLastValueAsync().Result.Value, minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
+            var temperature = new ValueConverter().ConvertValue(_humidityStorage.GetLastValueAsync().Result.Value, minmaxHumidity.MinSensor, minmaxHumidity.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
 
             var result = new PhysicalValue<HumidityUnit>(temperature, HumidityUnit.Percent);
 
@@ -41,16 +41,16 @@ namespace Weather.Core
             return _humidityStorage.GetMinValueAsync(DateTime.UtcNow).Result.Value;
         }
 
-        public PhysicalValue<HumidityUnit> HighHumidity(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<HumidityUnit> HighHumidity(MinMaxUnit minmaxHumidity)
         {
-            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
+            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxHumidity.MinSensor, minmaxHumidity.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
             var result = new PhysicalValue<HumidityUnit>(humidity, HumidityUnit.Percent);
             return result;
         }
 
-        public PhysicalValue<HumidityUnit> LowHumidity(MinMaxUnit minmaxTemperature)
+        public PhysicalValue<HumidityUnit> LowHumidity(MinMaxUnit minmaxHumidity)
         {
-            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
+            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxHumidity.MinSensor, minmaxHumidity.MaxSensor, _humidityStorage.GetMinimalHumidity(), _humidityStorage.GetMaximalHumidity());
             var result = new PhysicalValue<HumidityUnit>(humidity, HumidityUnit.Percent);
             return result;
         }

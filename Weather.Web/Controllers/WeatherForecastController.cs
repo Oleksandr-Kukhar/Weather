@@ -161,42 +161,7 @@ namespace Weather.Web.Controllers
 
             var minmaxtemp = _minmaxTemperature;
 
-            var windDirectionStr = "";
-            var direct = windDirectionSensor.CurrentDirection();
-            {
-                if (direct >= 337 || direct < 22)
-                {
-                    windDirectionStr = "N";
-                }
-                if (direct >= 22 && direct < 67)
-                {
-                    windDirectionStr = "NE";
-                }
-                if (direct >= 67 && direct < 112)
-                {
-                    windDirectionStr = "E";
-                }
-                if (direct >= 112 && direct < 157)
-                {
-                    windDirectionStr = "SE";
-                }
-                if (direct >= 157 && direct < 202)
-                {
-                    windDirectionStr = "S";
-                }
-                if (direct >= 202 && direct < 247)
-                {
-                    windDirectionStr = "SW";
-                }
-                if (direct >= 247 && direct < 292)
-                {
-                    windDirectionStr = "W";
-                }
-                if (direct >= 292 && direct < 337)
-                {
-                    windDirectionStr = "NW";
-                }
-            }
+
             var result = new PrimaryDataDTO()
             {
                 Date = DateTime.UtcNow.AddDays(-7).ToShortDateString(),
@@ -206,7 +171,7 @@ namespace Weather.Web.Controllers
                 Temperature = (int)temperatureSensor.CurrentTemperature(_minmaxTemperature).Value,
                 WindDirection = windDirectionSensor.CurrentDirection(),
                 WindSpeed = windSpeedSensor.CurrentSpeed(_minmaxWindSpeed).Value,
-                WindDirectionStr = windDirectionStr
+                WindDirectionStr = windDirectionSensor.CurrentDirectionString()
             };
             return Ok(result);
         }
