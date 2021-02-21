@@ -18,26 +18,26 @@ namespace Weather.Sensors
         }
 
 
-        public async Task WriteIndicatorsAsync(Indicator data, MinMaxUnit t, MinMaxUnit p, MinMaxUnit s, MinMaxUnit h)
+        public async Task WriteIndicatorsAsync(Indicator data)
         {
             var temperature = new Temperature()
             {
                 Id = Guid.NewGuid(),
-                Value = new ValueConverter().ConvertValue(data.main.Temperature,t.MinValue,t.MaxValue,t.MinSensor,t.MaxSensor),
+                Value = data.main.Temperature,
                 RegisterTime = DateTime.UtcNow
             };
 
             var pressure = new Pressure()
             {
                 Id = Guid.NewGuid(),
-                Value = new ValueConverter().ConvertValue(data.main.Pressure, p.MinValue, p.MaxValue, p.MinSensor, p.MaxSensor),
+                Value = data.main.Pressure, 
                 RegisterTime = DateTime.UtcNow
             };
 
             var humidity = new Humidity()
             {
                 Id = Guid.NewGuid(),
-                Value = new ValueConverter().ConvertValue(data.main.Humidity, h.MinValue, h.MaxValue, h.MinSensor, h.MaxSensor),
+                Value = data.main.Humidity,
                 RegisterTime = DateTime.UtcNow
             };
 
@@ -45,7 +45,7 @@ namespace Weather.Sensors
             {
                 Id = Guid.NewGuid(),
                 Direction = data.wind.Direction,
-                Speed = new ValueConverter().ConvertValue(data.wind.Speed, s.MinValue, s.MaxValue, s.MinSensor, s.MaxSensor),
+                Speed = data.wind.Speed,
                 RegisterTime = DateTime.UtcNow
             };
 

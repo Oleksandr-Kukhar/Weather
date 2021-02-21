@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Persistence.Infrast
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Sensors", "Weather.Sensors\Weather.Sensors.csproj", "{F9827F4E-0AF4-4C07-8410-B5D6FA093B9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Web", "Weather.Web\Weather.Web.csproj", "{3B3566E5-8774-44D7-938D-F9BBDF4D569F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Web", "Weather.Web\Weather.Web.csproj", "{3B3566E5-8774-44D7-938D-F9BBDF4D569F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Services", "Weather.Services\Weather.Services.csproj", "{9CFE272E-4EC4-43F3-8F13-F00FDD4FBA93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Log", "Weather.Log\Weather.Log.csproj", "{FDFBA76F-4546-4EB4-88D6-0036C3AA7CBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{3B3566E5-8774-44D7-938D-F9BBDF4D569F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B3566E5-8774-44D7-938D-F9BBDF4D569F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B3566E5-8774-44D7-938D-F9BBDF4D569F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CFE272E-4EC4-43F3-8F13-F00FDD4FBA93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CFE272E-4EC4-43F3-8F13-F00FDD4FBA93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CFE272E-4EC4-43F3-8F13-F00FDD4FBA93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CFE272E-4EC4-43F3-8F13-F00FDD4FBA93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDFBA76F-4546-4EB4-88D6-0036C3AA7CBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDFBA76F-4546-4EB4-88D6-0036C3AA7CBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDFBA76F-4546-4EB4-88D6-0036C3AA7CBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDFBA76F-4546-4EB4-88D6-0036C3AA7CBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

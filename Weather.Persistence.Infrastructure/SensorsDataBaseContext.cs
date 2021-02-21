@@ -26,8 +26,6 @@ namespace Weather.Persistence.Infrastructure
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=SensorsDataBase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             }
         }
 
@@ -69,7 +67,7 @@ namespace Weather.Persistence.Infrastructure
                 Value = 1100,
                 ValueName = "MaximalPressure"
             };
-            CriticalValues minSpd= new CriticalValues()
+            CriticalValues minSpd = new CriticalValues()
             {
                 Id = Guid.NewGuid(),
                 Value = 0,
@@ -81,7 +79,60 @@ namespace Weather.Persistence.Infrastructure
                 Value = 10,
                 ValueName = "MaximalWindSpeed"
             };
-            modelBuilder.Entity<CriticalValues>().HasData(new CriticalValues[] { minSpd, maxSpd, minPress, maxPress, minHum, maxHum, minTemp, maxTemp });
+
+
+            CriticalValues minRealTemp = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 278,
+                ValueName = "MinimalRealTemperature"
+            };
+            CriticalValues maxRealTemp = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 288,
+                ValueName = "MaximalRealTemperature"
+            };
+            CriticalValues minRealHum = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 30,
+                ValueName = "MinimalRealHumidity"
+            };
+            CriticalValues maxRealHum = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 100,
+                ValueName = "MaximalRealHumidity"
+            };
+            CriticalValues minRealPress = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 1000,
+                ValueName = "MinimalRealPressure"
+            };
+            CriticalValues maxRealPress = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 1100,
+                ValueName = "MaximalRealPressure"
+            };
+            CriticalValues minRealSpd = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 0,
+                ValueName = "MinimalRealWindSpeed"
+            };
+            CriticalValues maxRealSpd = new CriticalValues()
+            {
+                Id = Guid.NewGuid(),
+                Value = 10,
+                ValueName = "MaximalRealWindSpeed"
+            };
+            modelBuilder.Entity<CriticalValues>().HasData(new CriticalValues[] { 
+                minSpd, maxSpd, minPress, maxPress, minHum, maxHum, minTemp, maxTemp,
+                minRealSpd, maxRealSpd, minRealPress, maxRealPress, minRealHum, maxRealHum, minRealTemp, maxRealTemp,
+            });
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

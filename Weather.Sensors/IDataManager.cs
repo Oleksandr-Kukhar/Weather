@@ -8,7 +8,7 @@ namespace Weather.Sensors
 {
     public interface IDataManager
     {
-        Task StartDataRetreivingAsync(MinMaxUnit temperature, MinMaxUnit pressure, MinMaxUnit windSpeed, MinMaxUnit humidity);
+        Task StartDataRetreivingAsync();
         void StopThat();
     }
 }

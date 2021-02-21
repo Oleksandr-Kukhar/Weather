@@ -6,54 +6,61 @@ using Weather.Core.Domain;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
 using Weather.Persistence.Infrastructure.Storage.Intefaces;
+using Weather.Persistence.Infrastructure.Storage.Interfaces;
 
 namespace Weather.Core
 {
     public class WindSpeedSensor : HistoricalSensor<SpeedUnit>
     {
-        private IWindStorage _windStorage;
+        private readonly IWindStorage _windStorage;
+        private readonly ICriticalValuesStorage _criticalValuesStorage;
 
-        public WindSpeedSensor(IWindStorage storage)
+        public WindSpeedSensor(IWindStorage storage, ICriticalValuesStorage criticalValuesStorage)
         {
             _windStorage = storage;
-        }
-
-        public PhysicalValue<SpeedUnit> CurrentSpeed(MinMaxUnit minmaxWindSpeed)
-        {
-            var temperature = new ValueConverter().ConvertValue(_windStorage.GetLastValueAsync().Result.Speed, minmaxWindSpeed.MinSensor, minmaxWindSpeed.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
-
-            var result = new PhysicalValue<SpeedUnit>(temperature, SpeedUnit.MetersPerSecond);
-
-            return result;
+            _criticalValuesStorage = criticalValuesStorage;
         }
 
         public override double CurrentValue()
         {
-            throw new NotImplementedException();
+            var temperature = new ValueConverter().ConvertValue(
+                _windStorage.GetLastValueAsync().Result.Speed,
+                _criticalValuesStorage.WindSpeedLowValue,
+                _criticalValuesStorage.WindSpeedHighValue,
+                _criticalValuesStorage.RealWindSpeedLowValue,
+                _criticalValuesStorage.RealWindSpeedHighValue);
+
+            var result = new PhysicalValue<SpeedUnit>(temperature, SpeedUnit.MetersPerSecond);
+
+            return result.Value;
         }
 
         public override double HighValue()
         {
-            return _windStorage.GetMaxValueAsync(DateTime.UtcNow).Result.Speed;
+            var humidity = new ValueConverter().ConvertValue(
+                _windStorage.GetMaximalWindSpeed(),
+                _criticalValuesStorage.WindSpeedLowValue,
+                _criticalValuesStorage.WindSpeedHighValue,
+                _criticalValuesStorage.RealWindSpeedLowValue,
+                _criticalValuesStorage.RealWindSpeedHighValue);
+
+            var result = new PhysicalValue<SpeedUnit>(humidity, SpeedUnit.MetersPerSecond);
+
+            return result.Value;
         }
 
         public override double LowValue()
         {
-            return _windStorage.GetMinValueAsync(DateTime.UtcNow).Result.Speed;
-        }
+            var humidity = new ValueConverter().ConvertValue(
+                _windStorage.GetMinimalWindSpeed(),
+                _criticalValuesStorage.WindSpeedLowValue,
+                _criticalValuesStorage.WindSpeedHighValue,
+                _criticalValuesStorage.RealWindSpeedLowValue,
+                _criticalValuesStorage.RealWindSpeedHighValue);
 
-        public PhysicalValue<SpeedUnit> HighSpeed(MinMaxUnit minmaxWindSpeed)
-        {
-            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxWindSpeed.MinSensor, minmaxWindSpeed.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
             var result = new PhysicalValue<SpeedUnit>(humidity, SpeedUnit.MetersPerSecond);
-            return result;
-        }
 
-        public PhysicalValue<SpeedUnit> LowSpeed(MinMaxUnit minmaxWindSpeed)
-        {
-            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxWindSpeed.MinSensor, minmaxWindSpeed.MaxSensor, _windStorage.GetMinimalWindSpeed(), _windStorage.GetMaximalWindSpeed());
-            var result = new PhysicalValue<SpeedUnit>(humidity, SpeedUnit.MetersPerSecond);
-            return result;
+            return result.Value;
         }
 
         public override DateTime TimeOfHighValue()
@@ -68,14 +75,33 @@ namespace Weather.Core
             return minValTime;
         }
 
+        public override void SetRealHighValue(double newValue)
+        {
+            _criticalValuesStorage.RealWindSpeedHighValue = newValue;
+        }
+
+        public override void SetRealLowValue(double newValue)
+        {
+            _criticalValuesStorage.RealWindSpeedLowValue = newValue;
+        }
+
+        public override double GetRealHightValue()
+        {
+            return _criticalValuesStorage.RealWindSpeedHighValue;
+        }
+
+        public override double GetRealLowValue()
+        {
+            return _criticalValuesStorage.RealWindSpeedLowValue;
+        }
         public override void SetHighValue(double newValue)
         {
-            _windStorage.ChangeMaximalWindSpeed(newValue);
+            _criticalValuesStorage.WindSpeedHighValue = newValue;
         }
 
         public override void SetLowValue(double newValue)
         {
-            _windStorage.ChangeMinimalWindSpeed(newValue);
+            _criticalValuesStorage.WindSpeedLowValue = newValue;
         }
     }
 }

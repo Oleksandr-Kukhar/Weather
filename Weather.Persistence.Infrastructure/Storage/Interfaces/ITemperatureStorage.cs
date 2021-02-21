@@ -13,7 +13,5 @@ namespace Weather.Persistence.Infrastructure.Storage.Intefaces
         Task<Temperature> GetMinValueAsync(DateTime date);
         double GetMinimalTemperature();
         double GetMaximalTemperature();
-        void ChangeMinimalTemperature(double newTemperature);
-        void ChangeMaximalTemperature(double newTemperature);
     }
 }

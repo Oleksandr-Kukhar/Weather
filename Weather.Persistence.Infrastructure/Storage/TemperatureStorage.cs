@@ -40,24 +40,12 @@ namespace Weather.Persistence.Infrastructure.Storage
 
         public double GetMinimalTemperature()
         {
-            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalTemperature").Value;
+            return _dbContext.Temperature.Where(x => x.RegisterTime.Date == DateTime.Now.Date).Min(x => x.Value);
         }
 
         public double GetMaximalTemperature()
         {
-            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalTemperature").Value;
-        }
-        public void ChangeMinimalTemperature(double newTemperature)
-        {
-            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalTemperature");
-            temperature.Value = newTemperature;
-            _dbContext.SaveChanges();
-        }
-        public void ChangeMaximalTemperature(double newTemperature)
-        {
-            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalTemperature");
-            temperature.Value = newTemperature;
-            _dbContext.SaveChanges();
+            return _dbContext.Temperature.Where(x => x.RegisterTime.Date == DateTime.Now.Date).Max(x => x.Value);
         }
     }
 }

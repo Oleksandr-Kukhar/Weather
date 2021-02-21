@@ -39,24 +39,12 @@ namespace Weather.Persistence.Infrastructure.Storage
         }
         public double GetMinimalHumidity()
         {
-            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalHumidity").Value;
+            return _dbContext.Humidity.Where(x => x.RegisterTime.Date == DateTime.Now.Date).Min(x => x.Value);
         }
 
         public double GetMaximalHumidity()
         {
-            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalHumidity").Value;
-        }
-        public void ChangeMinimalHumidity(double newHumidity)
-        {
-            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalHumidity");
-            temperature.Value = newHumidity;
-            _dbContext.SaveChanges();
-        }
-        public void ChangeMaximalHumidity(double newHumidity)
-        {
-            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalHumidity");
-            temperature.Value = newHumidity;
-            _dbContext.SaveChanges();
+            return _dbContext.Humidity.Where(x => x.RegisterTime.Date == DateTime.Now.Date).Max(x => x.Value);
         }
     }
 }

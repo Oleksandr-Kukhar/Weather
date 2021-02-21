@@ -9,7 +9,12 @@ using Microsoft.Extensions.Hosting;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
 using Weather.Persistence.Infrastructure.Storage.Intefaces;
+using Weather.Persistence.Infrastructure.Storage.Interfaces;
+using Weather.Services;
+using Weather.Services.Interfaces;
 using Weather.Sensors;
+using Weather.Core;
+using Weather.Core.Domain;
 
 namespace Weather.Web
 {
@@ -32,14 +37,25 @@ namespace Weather.Web
             {
                 configuration.RootPath = "ClientApp/build";
             });
-            services.AddDbContext<SensorsDataBaseContext>(x => x.UseSqlServer(Configuration["DataBaseSettings:DataBaseConnetion"]));
+            services.AddDbContext<SensorsDataBaseContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<ITemperatureStorage, TemperatureStorage>();
             services.AddTransient<IHumidityStorage, HumidityStorage>();
             services.AddTransient<IWindStorage, WindStorage>();
             services.AddTransient<IPressureStorage, PressureStorage>();
-            services.AddSingleton<IDataManager, DataManager>();
+            services.AddTransient<ICriticalValuesStorage, CriticalValuesStorage>();
 
+            services.AddTransient<HistoricalSensor<TemperatureUnit>, TemperatureSensor>();
+            services.AddTransient<HistoricalSensor<HumidityUnit>, HumiditySensor>();
+            services.AddTransient<HistoricalSensor<PressureUnit>, PressureSensor>();
+            services.AddTransient<HistoricalSensor<SpeedUnit>, WindSpeedSensor>();
+            services.AddTransient<WindDirectionSensor>();
+
+            services.AddTransient<ICalibrationService, CalibrationService>();
+
+            services.AddSingleton<IDataManager, DataManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

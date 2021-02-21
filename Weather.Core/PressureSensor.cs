@@ -6,54 +6,61 @@ using Weather.Core.Domain;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
 using Weather.Persistence.Infrastructure.Storage.Intefaces;
+using Weather.Persistence.Infrastructure.Storage.Interfaces;
 
 namespace Weather.Core
 {
     public class PressureSensor : TrendSensor<PressureUnit>
     {
-        private IPressureStorage _pressureStorage;
+        private readonly IPressureStorage _pressureStorage;
+        private readonly ICriticalValuesStorage _criticalValuesStorage;
 
-        public PressureSensor(IPressureStorage storage)
+        public PressureSensor(IPressureStorage storage, ICriticalValuesStorage criticalValuesStorage)
         {
             _pressureStorage = storage;
-        }
-
-        public PhysicalValue<PressureUnit> CurrentPressure(MinMaxUnit minmaxPressure)
-        {
-            var temperature = new ValueConverter().ConvertValue(_pressureStorage.GetLastValueAsync().Result.Value, minmaxPressure.MinSensor, minmaxPressure.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
-
-            var result = new PhysicalValue<PressureUnit>(temperature, PressureUnit.Hectopascal);
-
-            return result;
+            _criticalValuesStorage = criticalValuesStorage;
         }
 
         public override double CurrentValue()
         {
-            throw new NotImplementedException();
+            var temperature = new ValueConverter().ConvertValue(
+                _pressureStorage.GetLastValueAsync().Result.Value,
+                _criticalValuesStorage.PressureLowValue,
+                _criticalValuesStorage.PressureHighValue,
+                _criticalValuesStorage.RealPressureLowValue,
+                _criticalValuesStorage.RealPressureHighValue);
+
+            var result = new PhysicalValue<PressureUnit>(temperature, PressureUnit.Hectopascal);
+
+            return result.Value;
         }
 
         public override double HighValue()
         {
-            return _pressureStorage.GetMaxValueAsync(DateTime.UtcNow).Result.Value;
+            var humidity = new ValueConverter().ConvertValue(
+                _pressureStorage.GetMaximalPressure(),
+                _criticalValuesStorage.PressureLowValue,
+                _criticalValuesStorage.PressureHighValue,
+                _criticalValuesStorage.RealPressureLowValue,
+                _criticalValuesStorage.RealPressureHighValue);
+
+            var result = new PhysicalValue<PressureUnit>(humidity, PressureUnit.Hectopascal);
+
+            return result.Value;
         }
 
         public override double LowValue()
         {
-            return _pressureStorage.GetMinValueAsync(DateTime.UtcNow).Result.Value;
-        }
+            var humidity = new ValueConverter().ConvertValue(
+                _pressureStorage.GetMaximalPressure(),
+                _criticalValuesStorage.PressureLowValue,
+                _criticalValuesStorage.PressureHighValue,
+                _criticalValuesStorage.RealPressureLowValue,
+                _criticalValuesStorage.RealPressureHighValue);
 
-        public PhysicalValue<PressureUnit> HighPressure(MinMaxUnit minmaxPressure)
-        {
-            var humidity = new ValueConverter().ConvertValue(HighValue(), minmaxPressure.MinSensor, minmaxPressure.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
             var result = new PhysicalValue<PressureUnit>(humidity, PressureUnit.Hectopascal);
-            return result;
-        }
 
-        public PhysicalValue<PressureUnit> LowPressure(MinMaxUnit minmaxPressure)
-        {
-            var humidity = new ValueConverter().ConvertValue(LowValue(), minmaxPressure.MinSensor, minmaxPressure.MaxSensor, _pressureStorage.GetMinimalPressure(), _pressureStorage.GetMaximalPressure());
-            var result = new PhysicalValue<PressureUnit>(humidity, PressureUnit.Hectopascal);
-            return result;
+            return result.Value;
         }
 
         public override DateTime TimeOfHighValue()
@@ -73,14 +80,33 @@ namespace Weather.Core
             throw new NotImplementedException();
         }
 
+        public override void SetRealHighValue(double newValue)
+        {
+            _criticalValuesStorage.RealPressureHighValue = newValue;
+        }
+
+        public override void SetRealLowValue(double newValue)
+        {
+            _criticalValuesStorage.RealPressureLowValue = newValue;
+        }
+
+        public override double GetRealHightValue()
+        {
+            return _criticalValuesStorage.RealPressureHighValue;
+        }
+
+        public override double GetRealLowValue()
+        {
+            return _criticalValuesStorage.RealPressureLowValue;
+        }
         public override void SetHighValue(double newValue)
         {
-            _pressureStorage.ChangeMaximalPressure(newValue);
+            _criticalValuesStorage.PressureHighValue = newValue;
         }
 
         public override void SetLowValue(double newValue)
         {
-            _pressureStorage.ChangeMinimalPressure(newValue);
+            _criticalValuesStorage.PressureLowValue = newValue;
         }
     }
 }

@@ -11,6 +11,7 @@ using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
 using Weather.Persistence.Infrastructure.Storage.Intefaces;
 using Weather.Sensors;
+using Weather.Services.Interfaces;
 using Weather.Web.DTO;
 
 namespace Weather.Web.Controllers
@@ -19,160 +20,99 @@ namespace Weather.Web.Controllers
 
     public class WeatherForecastController : ControllerBase
     {
-        private ITemperatureStorage _temperatureStorage;
-        private IWindStorage _windStorage;
-        private IHumidityStorage _humidityStorage;
-        private IPressureStorage _pressureStorage;
-        private IDataManager _dataManager;
+        private readonly ICalibrationService _calibrationService;
+        private readonly IDataManager _dataManager;
 
-        public MinMaxUnit _minmaxTemperature;
-        public MinMaxUnit _minmaxHumidity;
-        public MinMaxUnit _minmaxPressure;
-        public MinMaxUnit _minmaxWindSpeed;
-
+        private readonly HistoricalSensor<TemperatureUnit> _temperatureSensor;
+        private readonly HistoricalSensor<HumidityUnit> _humiditySensor;
+        private readonly HistoricalSensor<PressureUnit> _pressureSensor;
+        private readonly HistoricalSensor<SpeedUnit> _windSensor;
+        private readonly WindDirectionSensor _windDirectionSensor;
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, ITemperatureStorage temperatureStorage, IPressureStorage pressureStorage, IWindStorage windStorage, IHumidityStorage humidityStorage, IDataManager manager)
+        public WeatherForecastController(
+            ILogger<WeatherForecastController> logger, 
+            ICalibrationService calibrationService,
+            IDataManager manager,
+            HistoricalSensor<TemperatureUnit> temperatureSensor,
+            HistoricalSensor<HumidityUnit> humiditySensor,
+            HistoricalSensor<PressureUnit> pressureSensor,
+            HistoricalSensor<SpeedUnit> windSensor,
+            WindDirectionSensor windDirectionSensor)
         {
             _logger = logger;
-            _temperatureStorage = temperatureStorage;
-            _humidityStorage = humidityStorage;
-            _pressureStorage = pressureStorage;
-            _windStorage = windStorage;
+            _calibrationService = calibrationService;
+            _temperatureSensor = temperatureSensor;
+            _humiditySensor = humiditySensor;
+            _pressureSensor = pressureSensor;
+            _windSensor = windSensor;
+            _windDirectionSensor = windDirectionSensor;
+
             _dataManager = manager;
 
-            _minmaxTemperature = new MinMaxUnit()
-            {
-                MinValue = 278,
-                MaxValue = 288,
-                MinSensor = 20,
-                MaxSensor = 30,
-            };
-            _minmaxHumidity = new MinMaxUnit()
-            {
-                MinValue = 30,
-                MaxValue = 100,
-                MinSensor = 50,
-                MaxSensor = 75,
-            };
-            _minmaxPressure = new MinMaxUnit()
-            {
-                MinValue = 1000,
-                MaxValue = 1100,
-                MinSensor = 200,
-                MaxSensor = 1000,
-            };
-            _minmaxWindSpeed = new MinMaxUnit()
-            {
-                MinValue = 0,
-                MaxValue = 10,
-                MinSensor = 0,
-                MaxSensor = 1000,
-            };
-            _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
-
-
-        }
-
-        private void ChangeMinMaxValue(int valueId, double minValue, double maxValue, double minSensor, double maxSensor)
-        {
-            switch (valueId)
-            {
-                case 1:
-                    _minmaxTemperature.MinValue = minValue;
-                    _minmaxTemperature.MaxValue = maxValue;
-                    _minmaxTemperature.MinSensor = minSensor;
-                    _minmaxTemperature.MaxSensor = maxSensor;
-                    break;
-                case 2:
-                    _minmaxHumidity.MinValue = minValue;
-                    _minmaxHumidity.MaxValue = maxValue;
-                    _minmaxHumidity.MinSensor = minSensor;
-                    _minmaxHumidity.MaxSensor = maxSensor;
-                    break;
-                case 3:
-                    _minmaxPressure.MinValue = minValue;
-                    _minmaxPressure.MaxValue = maxValue;
-                    _minmaxPressure.MinSensor = minSensor;
-                    _minmaxPressure.MaxSensor = maxSensor;
-                    break;
-                case 4:
-                    _minmaxWindSpeed.MinValue = minValue;
-                    _minmaxWindSpeed.MaxValue = maxValue;
-                    _minmaxWindSpeed.MinSensor = minSensor;
-                    _minmaxWindSpeed.MaxSensor = maxSensor;
-                    break;
-                default:
-                    break;
-            }
+            _dataManager.StartDataRetreivingAsync();
         }
 
         [HttpGet]
         [Route("checkvalues")]
         public async Task<IActionResult> CheckValues()
         {
-            var temperatureSensor = new TemperatureSensor(_temperatureStorage);
-            var pressureSensor = new PressureSensor(_pressureStorage);
-            var humiditySensor = new HumiditySensor(_humidityStorage);
-            var windDirectionSensor = new WindDirectionSensor(_windStorage);
-            var windSpeedSensor = new WindSpeedSensor(_windStorage);
-
-            if ((int)temperatureSensor.HighTemperature(_minmaxTemperature).Value != (int)_minmaxTemperature.MaxValue || (int)temperatureSensor.LowTemperature(_minmaxTemperature).Value != (int)_minmaxTemperature.MinValue)
-            {
-                ChangeMinMaxValue(1, temperatureSensor.LowTemperature(_minmaxTemperature).Value, temperatureSensor.HighTemperature(_minmaxTemperature).Value, temperatureSensor.LowValue(), temperatureSensor.HighValue());
-                _dataManager.StopThat();
-                Thread.Sleep(1000);
-                await _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
-            }
-            if ((int)humiditySensor.HighHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MaxValue || (int)humiditySensor.LowHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MinValue)
-            {
-                ChangeMinMaxValue(2, humiditySensor.LowHumidity(_minmaxHumidity).Value, humiditySensor.HighHumidity(_minmaxHumidity).Value, humiditySensor.LowValue(), humiditySensor.HighValue());
-                _dataManager.StopThat();
-                Thread.Sleep(1000);
-                await _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
-            }
-            if ((int)pressureSensor.LowPressure(_minmaxPressure).Value != (int)_minmaxPressure.MinValue || (int)pressureSensor.HighPressure(_minmaxPressure).Value != (int)_minmaxPressure.MaxValue)
-            {
-                ChangeMinMaxValue(3, pressureSensor.LowPressure(_minmaxPressure).Value, pressureSensor.HighPressure(_minmaxPressure).Value, pressureSensor.LowValue(), pressureSensor.HighValue());
-                _dataManager.StopThat();
-                Thread.Sleep(1000);
-                _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
-            }
-            if ((int)windSpeedSensor.LowSpeed(_minmaxWindSpeed).Value != (int)_minmaxWindSpeed.MinValue || (int)windSpeedSensor.HighSpeed(_minmaxWindSpeed).Value != (int)_minmaxWindSpeed.MaxValue)
-            {
-                ChangeMinMaxValue(4, windSpeedSensor.LowSpeed(_minmaxWindSpeed).Value, windSpeedSensor.HighSpeed(_minmaxWindSpeed).Value, windSpeedSensor.LowValue(), windSpeedSensor.HighValue());
-                _dataManager.StopThat();
-                Thread.Sleep(1000);
-                _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
-            }
+            //var windDirectionSensor = new WindDirectionSensor(_windStorage);
+            //var windSpeedSensor = new WindSpeedSensor(_windStorage);
+            //
+            //bool isNeededRetrieveData = false;
+            //
+            //if ((int)_temperatureSensor.GetRealHightValue() != (int)_minmaxTemperature.MaxValue 
+            //    || (int)_temperatureSensor.GetRealLowValue() != (int)_minmaxTemperature.MinValue)
+            //{
+            //    ChangeMinMaxValue(1, temperatureSensor.LowTemperature(_minmaxTemperature).Value, temperatureSensor.HighTemperature(_minmaxTemperature).Value, temperatureSensor.LowValue(), temperatureSensor.HighValue());
+            //    isNeededRetrieveData = true;
+            //}
+            //if ((int)_humiditySensor.HighHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MaxValue 
+            //    || (int)_humiditySensor.LowHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MinValue)
+            //{
+            //    ChangeMinMaxValue(2, humiditySensor.LowHumidity(_minmaxHumidity).Value, humiditySensor.HighHumidity(_minmaxHumidity).Value, humiditySensor.LowValue(), humiditySensor.HighValue());
+            //    isNeededRetrieveData = true;
+            //}
+            //if ((int)_pressureSensor.LowPressure(_minmaxPressure).Value != (int)_minmaxPressure.MinValue 
+            //    || (int)_pressureSensor.HighPressure(_minmaxPressure).Value != (int)_minmaxPressure.MaxValue)
+            //{
+            //    ChangeMinMaxValue(3, pressureSensor.LowPressure(_minmaxPressure).Value, pressureSensor.HighPressure(_minmaxPressure).Value, pressureSensor.LowValue(), pressureSensor.HighValue());
+            //    isNeededRetrieveData = true;
+            //}
+            //if ((int)windSpeedSensor.LowSpeed(_minmaxWindSpeed).Value != (int)_minmaxWindSpeed.MinValue 
+            //    || (int)windSpeedSensor.HighSpeed(_minmaxWindSpeed).Value != (int)_minmaxWindSpeed.MaxValue)
+            //{
+            //    ChangeMinMaxValue(4, windSpeedSensor.LowSpeed(_minmaxWindSpeed).Value, windSpeedSensor.HighSpeed(_minmaxWindSpeed).Value, windSpeedSensor.LowValue(), windSpeedSensor.HighValue());
+            //    isNeededRetrieveData = true;
+            //}
+            //
+            //if (isNeededRetrieveData)
+            //{
+            //    _dataManager.StopThat();
+            //    Thread.Sleep(1000);
+            //    await _dataManager.StartDataRetreivingAsync();
+            //}
 
             return Ok();
         }
 
         [HttpGet]
         [Route("getsensordata")]
-        public async Task<IActionResult> GetForecastAsync()
+        public IActionResult GetForecast()
         {
-            var temperatureSensor = new TemperatureSensor(_temperatureStorage);
-            var pressureSensor = new PressureSensor(_pressureStorage);
-            var humiditySensor = new HumiditySensor(_humidityStorage);
-            var windDirectionSensor = new WindDirectionSensor(_windStorage);
-            var windSpeedSensor = new WindSpeedSensor(_windStorage);
-
-            var minmaxtemp = _minmaxTemperature;
-
 
             var result = new PrimaryDataDTO()
             {
                 Date = DateTime.UtcNow.AddDays(-7).ToShortDateString(),
                 Time = DateTime.Now.TimeOfDay.ToString().Substring(0, 5),
-                Humidity = (int)humiditySensor.CurrentHumidity(_minmaxHumidity).Value,
-                Pressure = (int)pressureSensor.CurrentPressure(_minmaxPressure).Value,
-                Temperature = (int)temperatureSensor.CurrentTemperature(_minmaxTemperature).Value,
-                WindDirection = windDirectionSensor.CurrentDirection(),
-                WindSpeed = windSpeedSensor.CurrentSpeed(_minmaxWindSpeed).Value,
-                WindDirectionStr = windDirectionSensor.CurrentDirectionString()
+                Humidity = (int)_humiditySensor.CurrentValue(),
+                Pressure = (int)_pressureSensor.CurrentValue(),
+                Temperature = (int)_temperatureSensor.CurrentValue(),
+                WindDirection = _windDirectionSensor.CurrentDirection(),
+                WindSpeed = _windSensor.CurrentValue(),
+                WindDirectionStr = _windDirectionSensor.CurrentDirectionString()
             };
             return Ok(result);
         }
@@ -182,18 +122,14 @@ namespace Weather.Web.Controllers
         [Route("startretrievingdata")]
         public async Task<IActionResult> StartRetrievingData()
         {
-            if (_minmaxTemperature == null)
-            {
-
-            }
-            _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
+            await _dataManager.StartDataRetreivingAsync();
 
             return Ok();
         }
 
         [HttpGet]
         [Route("stopretrievingdata")]
-        public async Task<IActionResult> StopRetrievingData()
+        public IActionResult StopRetrievingData()
         {
             _dataManager.StopThat();
 
@@ -202,65 +138,47 @@ namespace Weather.Web.Controllers
 
         [HttpGet]
         [Route("getsecondarydata")]
-        public async Task<IActionResult> GetSecondaryDataAsync()
+        public IActionResult GetSecondaryData()
         {
-            var temperatureSensor = new TemperatureSensor(_temperatureStorage);
-            var pressureSensor = new PressureSensor(_pressureStorage);
-            var humiditySensor = new HumiditySensor(_humidityStorage);
-            var windDirectionSensor = new WindDirectionSensor(_windStorage);
-            var windSpeedSensor = new WindSpeedSensor(_windStorage);
-            var windChill = new WindChill(temperatureSensor, windSpeedSensor);
-            var dewPoint = new DewPoint(temperatureSensor, humiditySensor);
             var timeSpan = new TimeSpan(3, 0, 0);
 
             var result = new SecondaryDataDTO()
             {
-                WindChill = (int)windChill.CalculateWindChill(_minmaxTemperature, _minmaxWindSpeed),
-                DewPoint = (int)dewPoint.CalculateDewPoint(_minmaxTemperature, _minmaxHumidity),
-                MaximalTemperature = (int)temperatureSensor.HighTemperature(_minmaxTemperature).Value,
-                MinimalTemperature = (int)temperatureSensor.LowTemperature(_minmaxTemperature).Value,
-                MaximalHumidity = (int)humiditySensor.HighHumidity(_minmaxHumidity).Value,
-                MinimalHumidity = (int)humiditySensor.LowHumidity(_minmaxHumidity).Value,
-                MinimalPressure = (int)pressureSensor.LowPressure(_minmaxPressure).Value,
-                MaximalPressure = (int)pressureSensor.HighPressure(_minmaxPressure).Value,
-                MinimalTemperatureTime = temperatureSensor.TimeOfLowValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
-                MaximalTemperatureTime = temperatureSensor.TimeOfHighValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
-                MinimalHumidityTime = humiditySensor.TimeOfLowValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
-                MaximalHumidityTime = humiditySensor.TimeOfHighValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
-                MinimalPressureTime = pressureSensor.TimeOfLowValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
-                MaximalPressureTime = pressureSensor.TimeOfHighValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
+                WindChill = (int)Formulas.CalculateWindChill(_temperatureSensor.CurrentValue(), _windSensor.CurrentValue()),
+                DewPoint = (int)Formulas.CalculateDewPoint(_temperatureSensor.CurrentValue(), _humiditySensor.CurrentValue()),
+                MaximalTemperature = (int)_temperatureSensor.HighValue(),
+                MinimalTemperature = (int)_temperatureSensor.LowValue(),
+                MaximalHumidity = (int)_humiditySensor.HighValue(),
+                MinimalHumidity = (int)_humiditySensor.LowValue(),
+                MinimalPressure = (int)_pressureSensor.LowValue(),
+                MaximalPressure = (int)_pressureSensor.HighValue(),
+                MinimalTemperatureTime = _temperatureSensor.TimeOfLowValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
+                MaximalTemperatureTime = _temperatureSensor.TimeOfHighValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
+                MinimalHumidityTime = _humiditySensor.TimeOfLowValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
+                MaximalHumidityTime = _humiditySensor.TimeOfHighValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
+                MinimalPressureTime = _pressureSensor.TimeOfLowValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
+                MaximalPressureTime = _pressureSensor.TimeOfHighValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
             };
             return Ok(result);
         }
 
         [HttpGet]
         [Route("change/{id}/{minValue}/{maxValue}")]
-        public async Task<IActionResult> CallibrateSensor(int id, int minValue, int maxValue)
+        public IActionResult CallibrateSensor(int id, int minValue, int maxValue)
         {
-
             switch (id)
             {
                 case 1:
-                    var temperatureSensor = new TemperatureSensor(_temperatureStorage);
-                    minValue = minValue + 273;
-                    maxValue = maxValue + 273;
-                    temperatureSensor.SetHighValue(maxValue);
-                    temperatureSensor.SetLowValue(minValue);
+                    _calibrationService.CalibrateTemperatureSensor(minValue, maxValue);
                     break;
                 case 2:
-                    var humiditySensor = new HumiditySensor(_humidityStorage);
-                    humiditySensor.SetHighValue(maxValue);
-                    humiditySensor.SetLowValue(minValue);
+                    _calibrationService.CalibrateHumiditySensor(minValue, maxValue);
                     break;
                 case 3:
-                    var pressureSensor = new PressureSensor(_pressureStorage);
-                    pressureSensor.SetHighValue(maxValue);
-                    pressureSensor.SetLowValue(minValue);
+                    _calibrationService.CalibratePressureSensor(minValue, maxValue);
                     break;
                 case 4:
-                    var windSpeedSensor = new WindSpeedSensor(_windStorage);
-                    windSpeedSensor.SetHighValue(maxValue);
-                    windSpeedSensor.SetLowValue(minValue);
+                    _calibrationService.CalibrateWindSpeedSensor(minValue, maxValue);
                     break;
                 default:
                     break;

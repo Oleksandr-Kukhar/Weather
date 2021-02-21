@@ -24,7 +24,7 @@ export class Home extends Component {
       setInterval(async () => {
         const data = (await axios.get("getsensordata")).data;
         that.setState({ date: data.date, time: data.time, temperature: data.temperature, pressure: data.pressure, humidity: data.humidity, windDirection: data.windDirection, windSpeed: data.windSpeed, windDirectionStr: data.windDirectionStr });
-      }, 60000);
+      }, 15000);
       that.setState({ loading: true });
     }
   }

@@ -13,8 +13,6 @@ namespace Weather.Persistence.Infrastructure.Storage.Intefaces
         Task<Pressure> GetMinValueAsync(DateTime date);
         double GetMinimalPressure();
         double GetMaximalPressure();
-        void ChangeMinimalPressure(double newPressure);
-        void ChangeMaximalPressure(double newPressure);
 
     }
 }

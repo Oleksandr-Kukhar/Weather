@@ -39,24 +39,12 @@ namespace Weather.Persistence.Infrastructure.Storage
         }
         public double GetMinimalPressure()
         {
-            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalPressure").Value;
+            return _dbContext.Pressure.Where(x => x.RegisterTime.Date == DateTime.Now.Date).Min(x => x.Value);
         }
 
         public double GetMaximalPressure()
         {
-            return _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalPressure").Value;
-        }
-        public void ChangeMinimalPressure(double newPressure)
-        {
-            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MinimalPressure");
-            temperature.Value = newPressure;
-            _dbContext.SaveChanges();
-        }
-        public void ChangeMaximalPressure(double newPressure)
-        {
-            var temperature = _dbContext.CriticalValues.FirstOrDefault(x => x.ValueName == "MaximalPressure");
-            temperature.Value = newPressure;
-            _dbContext.SaveChanges();
+            return _dbContext.Pressure.Where(x => x.RegisterTime.Date == DateTime.Now.Date).Max(x => x.Value);
         }
     }
 }

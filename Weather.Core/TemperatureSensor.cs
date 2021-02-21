@@ -6,64 +6,81 @@ using Weather.Core.Domain;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
 using Weather.Persistence.Infrastructure.Storage.Intefaces;
+using Weather.Persistence.Infrastructure.Storage.Interfaces;
 
 namespace Weather.Core
 {
     public class TemperatureSensor : TrendSensor<TemperatureUnit>
     {
         private readonly ITemperatureStorage _temperatureStorage;
+        private readonly ICriticalValuesStorage _criticalValuesStorage;
 
-        public TemperatureSensor(ITemperatureStorage storage)
+        public TemperatureSensor(ITemperatureStorage storage, ICriticalValuesStorage criticalValuesStorage)
         {
             _temperatureStorage = storage;
-        }
-
-        public PhysicalValue<TemperatureUnit> CurrentTemperature(MinMaxUnit minmaxTemperature)
-        {
-            var temperature = new ValueConverter().ConvertValue(_temperatureStorage.GetLastValueAsync().Result.Value, minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _temperatureStorage.GetMinimalTemperature(), _temperatureStorage.GetMaximalTemperature());
-
-            var result = new PhysicalValue<TemperatureUnit>(temperature, TemperatureUnit.Kelvin);
-
-            return result;
+            _criticalValuesStorage = criticalValuesStorage;
         }
 
         public override double CurrentValue()
         {
-            return _temperatureStorage.GetLastValueAsync().Result.Value;
+            var temperature = new ValueConverter().ConvertValue(
+                _temperatureStorage.GetLastValueAsync().Result.Value,
+                _criticalValuesStorage.TemperatureLowValue,
+                _criticalValuesStorage.TemperatureHighValue,
+                _criticalValuesStorage.RealTemperatureLowValue,
+                _criticalValuesStorage.RealTemperatureHighValue);
+
+            var result = new PhysicalValue<TemperatureUnit>(temperature, TemperatureUnit.Kelvin);
+
+            return result.Value;
         }
 
         public override double HighValue()
         {
-            return _temperatureStorage.GetMaxValueAsync(DateTime.UtcNow).Result.Value;
+            var temperature = new ValueConverter().ConvertValue(
+                _temperatureStorage.GetMaximalTemperature(),
+                _criticalValuesStorage.TemperatureLowValue,
+                _criticalValuesStorage.TemperatureHighValue,
+                _criticalValuesStorage.RealTemperatureLowValue,
+                _criticalValuesStorage.RealTemperatureHighValue);
+
+            var result = new PhysicalValue<TemperatureUnit>(temperature, TemperatureUnit.Kelvin);
+
+            return result.Value;
         }
 
         public override double LowValue()
         {
-            return _temperatureStorage.GetMinValueAsync(DateTime.UtcNow).Result.Value;
-        }
+            var temperature = new ValueConverter().ConvertValue(
+                _temperatureStorage.GetMaximalTemperature(),
+                _criticalValuesStorage.TemperatureLowValue,
+                _criticalValuesStorage.TemperatureHighValue,
+                _criticalValuesStorage.RealTemperatureLowValue,
+                _criticalValuesStorage.RealTemperatureHighValue);
 
-        public PhysicalValue<TemperatureUnit> HighTemperature(MinMaxUnit minmaxTemperature)
-        {
-            var temperature = new ValueConverter().ConvertValue(HighValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _temperatureStorage.GetMinimalTemperature(), _temperatureStorage.GetMaximalTemperature());
             var result = new PhysicalValue<TemperatureUnit>(temperature, TemperatureUnit.Kelvin);
-            return result;
+
+            return result.Value;
         }
 
-        public PhysicalValue<TemperatureUnit> LowTemperature(MinMaxUnit minmaxTemperature)
+        public override void SetRealHighValue(double newValue)
         {
-            var temperature = new ValueConverter().ConvertValue(LowValue(), minmaxTemperature.MinSensor, minmaxTemperature.MaxSensor, _temperatureStorage.GetMinimalTemperature(), _temperatureStorage.GetMaximalTemperature());
-            var result = new PhysicalValue<TemperatureUnit>(temperature, TemperatureUnit.Kelvin);
-            return result;
+            _criticalValuesStorage.RealTemperatureHighValue = newValue;
         }
 
-        public override void SetHighValue(double newValue)
+        public override void SetRealLowValue(double newValue)
         {
-            _temperatureStorage.ChangeMaximalTemperature(newValue);
+            _criticalValuesStorage.RealTemperatureLowValue = newValue;
         }
 
-        public override void SetLowValue(double newValue)
+        public override double GetRealHightValue()
         {
-            _temperatureStorage.ChangeMinimalTemperature(newValue);
+            return _criticalValuesStorage.RealTemperatureHighValue;
+        }
+
+        public override double GetRealLowValue()
+        {
+            return _criticalValuesStorage.RealTemperatureLowValue;
         }
 
         public override DateTime TimeOfHighValue()
@@ -81,6 +98,15 @@ namespace Weather.Core
         public override double Trend()
         {
             throw new NotImplementedException();
+        }
+        public override void SetHighValue(double newValue)
+        {
+            _criticalValuesStorage.TemperatureHighValue = newValue;
+        }
+
+        public override void SetLowValue(double newValue)
+        {
+            _criticalValuesStorage.TemperatureLowValue = newValue;
         }
 
     }

@@ -22,8 +22,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Weather.Core\Weather.Core.csproj" />
+    <ProjectReference Include="..\Weather.Log\Weather.Log.csproj" />
     <ProjectReference Include="..\Weather.Persistence.Infrastructure\Weather.Persistence.Infrastructure.csproj" />
+    <ProjectReference Include="..\Weather.Persistence.Model\Weather.Persistence.Model.csproj" />
     <ProjectReference Include="..\Weather.Sensors\Weather.Sensors.csproj" />
+    <ProjectReference Include="..\Weather.Services\Weather.Services.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
