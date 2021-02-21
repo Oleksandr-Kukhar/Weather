@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
+using Weather.Persistence.Infrastructure.Storage.Intefaces;
 using Weather.Sensors;
 
 namespace Weather.Web
@@ -24,20 +25,21 @@ namespace Weather.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllersWithViews();
-
+            
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
-            services.AddDbContext<SensorsDataBaseContext>(x => x.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=SensorsDataBase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"));
+            services.AddDbContext<SensorsDataBaseContext>(x => x.UseSqlServer(Configuration["DataBaseSettings:DataBaseConnetion"]));
+
             services.AddTransient<ITemperatureStorage, TemperatureStorage>();
             services.AddTransient<IHumidityStorage, HumidityStorage>();
             services.AddTransient<IWindStorage, WindStorage>();
             services.AddTransient<IPressureStorage, PressureStorage>();
             services.AddSingleton<IDataManager, DataManager>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

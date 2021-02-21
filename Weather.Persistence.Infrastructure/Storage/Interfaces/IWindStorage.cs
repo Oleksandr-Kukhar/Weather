@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Weather.Persistence.Model;
 
-namespace Weather.Persistence.Infrastructure.Storage
+namespace Weather.Persistence.Infrastructure.Storage.Intefaces
 {
     public interface IWindStorage
     {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Weather.Persistence.Model;
+using Weather.Persistence.Infrastructure.Storage.Intefaces;
 
 namespace Weather.Persistence.Infrastructure.Storage
 {

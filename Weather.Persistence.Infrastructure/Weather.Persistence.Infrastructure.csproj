@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Weather.Persistence.Model\Weather.Persistence.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Interfaces\" />
+  </ItemGroup>
+
 </Project>
