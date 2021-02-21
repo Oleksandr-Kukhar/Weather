@@ -33,7 +33,7 @@ namespace Weather.Sensors
 
                 while (_shouldRetrieveData)
                 {
-                    if ((DateTime.Now.Second + 1) % 15 == 0)
+                    if (DateTime.Now.Second == 30)
                     {
                         using var scope = _scopeFactory.CreateScope();
                         WeatherWriter weatherWriter = new WeatherWriter(scope.ServiceProvider.GetRequiredService<SensorsDataBaseContext>());
