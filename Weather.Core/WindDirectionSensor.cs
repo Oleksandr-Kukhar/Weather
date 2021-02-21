@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
+using Weather.Persistence.Infrastructure.Storage.Intefaces;
 
 namespace Weather.Core
 {

@@ -5,6 +5,7 @@ using System.Text;
 using Weather.Core.Domain;
 using Weather.Persistence.Infrastructure;
 using Weather.Persistence.Infrastructure.Storage;
+using Weather.Persistence.Infrastructure.Storage.Intefaces;
 
 namespace Weather.Core
 {

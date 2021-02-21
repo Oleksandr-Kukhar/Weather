@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Weather.Core;
 using Weather.Core.Domain;
+using Weather.Persistence.Infrastructure;
+using Weather.Persistence.Infrastructure.Storage;
 using Weather.Persistence.Infrastructure.Storage.Intefaces;
 using Weather.Sensors;
 using Weather.Web.DTO;
