@@ -123,7 +123,7 @@ namespace Weather.Web.Controllers
                 ChangeMinMaxValue(1, temperatureSensor.LowTemperature(_minmaxTemperature).Value, temperatureSensor.HighTemperature(_minmaxTemperature).Value, temperatureSensor.LowValue(), temperatureSensor.HighValue());
                 _dataManager.StopThat();
                 Thread.Sleep(1000);
-                _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
+                await _dataManager.StartDataRetreivingAsync(_minmaxTemperature, _minmaxPressure, _minmaxWindSpeed, _minmaxHumidity);
             }
             if ((int)humiditySensor.HighHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MaxValue || (int)humiditySensor.LowHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MinValue)
             {
