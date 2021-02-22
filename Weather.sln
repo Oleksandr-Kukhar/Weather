@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Sensors", "Weather.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Web", "Weather.Web\Weather.Web.csproj", "{3B3566E5-8774-44D7-938D-F9BBDF4D569F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Services", "Weather.Services\Weather.Services.csproj", "{9CFE272E-4EC4-43F3-8F13-F00FDD4FBA93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Services", "Weather.Services\Weather.Services.csproj", "{9CFE272E-4EC4-43F3-8F13-F00FDD4FBA93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Log", "Weather.Log\Weather.Log.csproj", "{FDFBA76F-4546-4EB4-88D6-0036C3AA7CBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Logger", "Weather.Log\Weather.Logger.csproj", "{FDFBA76F-4546-4EB4-88D6-0036C3AA7CBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
