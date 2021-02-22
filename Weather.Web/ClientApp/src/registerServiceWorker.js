@@ -18,8 +18,10 @@ const isLocalhost = Boolean(
   )
 );
 
-export default function register () {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+export default function register() {
+    console.log("Registering?")
+    if ((process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) || true) {
+      console.log("YES")
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location);
     if (publicUrl.origin !== window.location.origin) {
@@ -28,59 +30,46 @@ export default function register () {
       // serve assets; see https://github.com/facebookincubator/create-react-app/issues/2374
       return;
     }
-
+        console.log("Events!")
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
-
+        const swUrl = `${process.env.PUBLIC_URL}/sw.js`;
+        console.log("url sw", swUrl)
       if (isLocalhost) {
         // This is running on localhost. Lets check if a service worker still exists or not.
         checkValidServiceWorker(swUrl);
       } else {
         // Is not local host. Just register service worker
+          
         registerValidSW(swUrl);
       }
     });
   }
 }
 
-function registerValidSW (swUrl) {
-  navigator.serviceWorker
-    .register(swUrl)
-    .then(registration => {
-      registration.onupdatefound = () => {
-        const installingWorker = registration.installing;
-        installingWorker.onstatechange = () => {
-          if (installingWorker.state === 'installed') {
-            if (navigator.serviceWorker.controller) {
-              // At this point, the old content will have been purged and
-              // the fresh content will have been added to the cache.
-              // It's the perfect time to display a "New content is
-              // available; please refresh." message in your web app.
-              console.log('New content is available; please refresh.');
-            } else {
-              // At this point, everything has been precached.
-              // It's the perfect time to display a
-              // "Content is cached for offline use." message.
-              console.log('Content is cached for offline use.');
-            }
-          }
-        };
-      };
-    })
-    .catch(error => {
-      console.error('Error during service worker registration:', error);
-    });
+function registerValidSW(swUrl) {
+    console.log("SO run bitch")
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(swUrl).then(function (registration) {
+            // Registration Success
+            console.log('[serviceWorker]: registration successful with scope: ', registration.scope);
+        }).catch(function (err) {
+            // Registration failed :(
+            console.log('[serviceWorker] registration failed', err);
+        });
+    }
 }
 
-function checkValidServiceWorker (swUrl) {
+function checkValidServiceWorker(swUrl) {
+    console.log("And start registering")
   // Check if the service worker can be found. If it can't reload the page.
   fetch(swUrl)
-    .then(response => {
+      .then(response => {
+        console.log("Just kidding")
       // Ensure service worker exists, and that we really are getting a JS file.
       if (
-        response.status === 404 ||
-        response.headers.get('content-type').indexOf('javascript') === -1
+        response.status === 404 
       ) {
+          console.log("Why unregister?", response.status === 404, response.headers.get('content-type').indexOf('javascript') === -1)
         // No service worker found. Probably a different app. Reload the page.
         navigator.serviceWorker.ready.then(registration => {
           registration.unregister().then(() => {
@@ -88,6 +77,7 @@ function checkValidServiceWorker (swUrl) {
           });
         });
       } else {
+          console.log("Hmm works fine")
         // Service worker found. Proceed as normal.
         registerValidSW(swUrl);
       }

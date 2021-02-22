@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Weather.Log.Domain;
+using Weather.Logger.Domain;
 
 namespace Weather.Logger
 {
