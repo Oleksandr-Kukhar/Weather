@@ -52,7 +52,7 @@ namespace Weather.Core
         public override double LowValue()
         {
             var temperature = new ValueConverter().ConvertValue(
-                _temperatureStorage.GetMaximalTemperature(),
+                _temperatureStorage.GetMinimalTemperature(),
                 _criticalValuesStorage.TemperatureLowValue,
                 _criticalValuesStorage.TemperatureHighValue,
                 _criticalValuesStorage.RealTemperatureLowValue,

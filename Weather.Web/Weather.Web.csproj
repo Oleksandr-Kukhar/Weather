@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Weather.Core\Weather.Core.csproj" />
-    <ProjectReference Include="..\Weather.Log\Weather.Logger.csproj" />
     <ProjectReference Include="..\Weather.Persistence.Infrastructure\Weather.Persistence.Infrastructure.csproj" />
     <ProjectReference Include="..\Weather.Persistence.Model\Weather.Persistence.Model.csproj" />
     <ProjectReference Include="..\Weather.Sensors\Weather.Sensors.csproj" />

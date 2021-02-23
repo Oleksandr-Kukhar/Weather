@@ -52,7 +52,7 @@ namespace Weather.Core
         public override double LowValue()
         {
             var humidity = new ValueConverter().ConvertValue(
-                _pressureStorage.GetMaximalPressure(),
+                _pressureStorage.GetMinimalPressure(),
                 _criticalValuesStorage.PressureLowValue,
                 _criticalValuesStorage.PressureHighValue,
                 _criticalValuesStorage.RealPressureLowValue,

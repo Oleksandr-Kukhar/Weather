@@ -51,49 +51,14 @@ namespace Weather.Web.Controllers
 
             _dataManager = manager;
 
-            _dataManager.StartDataRetreivingAsync();
+            // Якось потім пофікшу
+            //_dataManager.StartDataRetreivingAsync();
         }
 
         [HttpGet]
         [Route("checkvalues")]
-        public async Task<IActionResult> CheckValues()
+        public IActionResult CheckValues()
         {
-            //var windDirectionSensor = new WindDirectionSensor(_windStorage);
-            //var windSpeedSensor = new WindSpeedSensor(_windStorage);
-            //
-            //bool isNeededRetrieveData = false;
-            //
-            //if ((int)_temperatureSensor.GetRealHightValue() != (int)_minmaxTemperature.MaxValue 
-            //    || (int)_temperatureSensor.GetRealLowValue() != (int)_minmaxTemperature.MinValue)
-            //{
-            //    ChangeMinMaxValue(1, temperatureSensor.LowTemperature(_minmaxTemperature).Value, temperatureSensor.HighTemperature(_minmaxTemperature).Value, temperatureSensor.LowValue(), temperatureSensor.HighValue());
-            //    isNeededRetrieveData = true;
-            //}
-            //if ((int)_humiditySensor.HighHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MaxValue 
-            //    || (int)_humiditySensor.LowHumidity(_minmaxHumidity).Value != (int)_minmaxHumidity.MinValue)
-            //{
-            //    ChangeMinMaxValue(2, humiditySensor.LowHumidity(_minmaxHumidity).Value, humiditySensor.HighHumidity(_minmaxHumidity).Value, humiditySensor.LowValue(), humiditySensor.HighValue());
-            //    isNeededRetrieveData = true;
-            //}
-            //if ((int)_pressureSensor.LowPressure(_minmaxPressure).Value != (int)_minmaxPressure.MinValue 
-            //    || (int)_pressureSensor.HighPressure(_minmaxPressure).Value != (int)_minmaxPressure.MaxValue)
-            //{
-            //    ChangeMinMaxValue(3, pressureSensor.LowPressure(_minmaxPressure).Value, pressureSensor.HighPressure(_minmaxPressure).Value, pressureSensor.LowValue(), pressureSensor.HighValue());
-            //    isNeededRetrieveData = true;
-            //}
-            //if ((int)windSpeedSensor.LowSpeed(_minmaxWindSpeed).Value != (int)_minmaxWindSpeed.MinValue 
-            //    || (int)windSpeedSensor.HighSpeed(_minmaxWindSpeed).Value != (int)_minmaxWindSpeed.MaxValue)
-            //{
-            //    ChangeMinMaxValue(4, windSpeedSensor.LowSpeed(_minmaxWindSpeed).Value, windSpeedSensor.HighSpeed(_minmaxWindSpeed).Value, windSpeedSensor.LowValue(), windSpeedSensor.HighValue());
-            //    isNeededRetrieveData = true;
-            //}
-            //
-            //if (isNeededRetrieveData)
-            //{
-            //    _dataManager.StopThat();
-            //    Thread.Sleep(1000);
-            //    await _dataManager.StartDataRetreivingAsync();
-            //}
 
             return Ok();
         }
@@ -102,10 +67,9 @@ namespace Weather.Web.Controllers
         [Route("getsensordata")]
         public IActionResult GetForecast()
         {
-
             var result = new PrimaryDataDTO()
             {
-                Date = DateTime.UtcNow.AddDays(-7).ToShortDateString(),
+                Date = DateTime.UtcNow.ToShortDateString(),
                 Time = DateTime.Now.TimeOfDay.ToString().Substring(0, 5),
                 Humidity = (int)_humiditySensor.CurrentValue(),
                 Pressure = (int)_pressureSensor.CurrentValue(),
@@ -114,6 +78,7 @@ namespace Weather.Web.Controllers
                 WindSpeed = _windSensor.CurrentValue(),
                 WindDirectionStr = _windDirectionSensor.CurrentDirectionString()
             };
+
             return Ok(result);
         }
 
@@ -140,7 +105,7 @@ namespace Weather.Web.Controllers
         [Route("getsecondarydata")]
         public IActionResult GetSecondaryData()
         {
-            var timeSpan = new TimeSpan(3, 0, 0);
+            var timeSpan = DateTime.Now - DateTime.UtcNow;
 
             var result = new SecondaryDataDTO()
             {
@@ -159,6 +124,7 @@ namespace Weather.Web.Controllers
                 MinimalPressureTime = _pressureSensor.TimeOfLowValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
                 MaximalPressureTime = _pressureSensor.TimeOfHighValue().TimeOfDay.Add(timeSpan).ToString().Substring(0, 5),
             };
+            
             return Ok(result);
         }
 
@@ -169,7 +135,7 @@ namespace Weather.Web.Controllers
             switch (id)
             {
                 case 1:
-                    _calibrationService.CalibrateTemperatureSensor(minValue, maxValue);
+                    _calibrationService.CalibrateTemperatureSensor(minValue + 273, maxValue + 273);
                     break;
                 case 2:
                     _calibrationService.CalibrateHumiditySensor(minValue, maxValue);
